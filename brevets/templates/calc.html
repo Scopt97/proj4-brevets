@@ -124,10 +124,12 @@
   // stash them in hidden fields.)
   function calc_times(control) {
     var km = control.find("input[name='km']").val();  ///TODO add the other variables like this
+    var brevet = control.find("input[name='distance']").val();  ///
+   // var start = control.find("input[name='']").val(); ///
     var open_time_field = control.find("input[name='open']");
     var close_time_field = control.find("input[name='close']");
 
-    $.getJSON(TIME_CALC_URL, { km: km },
+    $.getJSON(TIME_CALC_URL, { km: km, brevet: brevet },
       // response handler
       function(data) {
          var times = data.result;

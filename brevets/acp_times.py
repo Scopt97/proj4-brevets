@@ -29,7 +29,7 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control open time.
        This will be in the same time zone as the brevet start time.
     """
-    #print("*******************\nStart: ", brevet_start_time)
+    print("*******************\nStart: ", brevet_dist_km)
     start = arrow.get(brevet_start_time)
     #start = brevet_start_time
     #print(type(start))
@@ -46,19 +46,15 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
         except:
             next_dist = 0  # prevent list index out of range errors
 
-        print(brevet_dist_km * 1.2)
-        print(control_dist_km)
         if (control_dist_km <= (brevet_dist_km*1.2)) and (brevet_dist_km == dist) and (control_dist_km > brevet_dist_km):  # Total brevel distance can be 20% above the bound
             working_dist = dist - next_dist
             open_delay += (working_dist / max_speed)
             remaining_dist = next_dist
-            print("except: ", dist)
 
         elif (remaining_dist <= dist) and (remaining_dist > next_dist) and not (control_dist_km > brevet_dist_km):
             working_dist = remaining_dist - next_dist
             open_delay += (working_dist / max_speed)
             remaining_dist = next_dist
-            print("Normal: ", dist)
 
         i +=1
 
@@ -90,8 +86,6 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
-    #TODO dict {brevet_dist: close delay}
-
 
     start = arrow.get(brevet_start_time)
     close_table = [(1000, 11.428), (600, 15), (400, 15), (200, 15)]

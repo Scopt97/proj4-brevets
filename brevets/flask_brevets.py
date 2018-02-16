@@ -53,6 +53,7 @@ def _calc_times():
     """
     app.logger.debug("Got a JSON request")
     km = request.args.get('km', 999, type=float)
+    print("*********", request.args)
     app.logger.debug("km={}".format(km))
     app.logger.debug("request.args: {}".format(request.args))
     # FIXME: These probably aren't the right open and close times
