@@ -1,9 +1,9 @@
-FROM python:3
-MAINTAINER Ram Durairajan "noemail@website.domain"
+FROM python:latest
+MAINTAINER Kyle Nielsen "kylen@uoregon.edu"
 RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential
+RUN apt-get install -y python3-pip python3-dev build-essential
 COPY . /app
 WORKDIR /app
-RUN pip install -r requirements.txt
-ENTRYPOINT ["python"]
+RUN pip3 install -r requirements.txt
+ENTRYPOINT ["python3"]
 CMD ["flask_brevets.py"]
