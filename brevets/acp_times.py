@@ -29,11 +29,11 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control open time.
        This will be in the same time zone as the brevet start time.
     """
-    print("*******************\nStart: ", brevet_start_time)
+    #print("*******************\nStart: ", brevet_start_time)
     start = arrow.get(brevet_start_time)
     #start = brevet_start_time
-    print(type(start))
-    print("*******************\nStart: ", start)
+    #print(type(start))
+    #print("*******************\nStart: ", start)
     open_table = [(1000, 28), (600, 30), (400, 32), (200, 34)]
     remaining_dist = control_dist_km
     open_delay = 0
@@ -46,20 +46,32 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
         except:
             next_dist = 0  # prevent list index out of range errors
 
-        if (control_dist_km == brevet_dist_km) and (brevet_dist_km <= (dist + (dist*.2))) and (brevet_dist_km > next_dist):  # Total brevel distance can be 20% above the bound
+        print(brevet_dist_km * 1.2)
+        print(control_dist_km)
+        if (control_dist_km <= (brevet_dist_km*1.2)) and (brevet_dist_km == dist) and (control_dist_km > brevet_dist_km):  # Total brevel distance can be 20% above the bound
+            working_dist = dist - next_dist
+            open_delay += (working_dist / max_speed)
+            remaining_dist = next_dist
+            print("except: ", dist)
+
+        elif (remaining_dist <= dist) and (remaining_dist > next_dist) and not (control_dist_km > brevet_dist_km):
             working_dist = remaining_dist - next_dist
             open_delay += (working_dist / max_speed)
             remaining_dist = next_dist
+            print("Normal: ", dist)
 
-        elif (remaining_dist <= dist) and (remaining_dist > next_dist):
-            working_dist = remaining_dist - next_dist
-            open_delay += (working_dist / max_speed)
-            remaining_dist = next_dist
+        i +=1
 
-        i += 1
+    delay_hours = int(open_delay)
+    delay_mins = (open_delay - delay_hours) * 60
+    int_delay_mins = int(delay_mins)
 
+    if (delay_mins - int_delay_mins) >= .5:
+        delay_mins = int_delay_mins + 1  # Handle rounding up
+    else:
+        delay_mins = int_delay_mins
 
-    open_time = start.shift(hours=+open_delay)
+    open_time = start.shift(hours=+delay_hours, minutes=+delay_mins)
     return open_time.isoformat()
 
     #return arrow.now().isoformat()
@@ -88,7 +100,7 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
     close_delay = 0
     i = 0
 
-    if control_dist_km == brevet_dist_km:  # deal with special cases for the finish
+    if control_dist_km >= brevet_dist_km:  # deal with special cases for the finish
         for pair in close_brevet:
             dist, time = pair
 
@@ -101,7 +113,16 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
                 close_delay = time
             i += 1
 
-        close_time = start.shift(hours=+close_delay)
+        delay_hours = int(close_delay)
+        delay_mins = (close_delay - delay_hours) * 60
+        int_delay_mins = int(delay_mins)
+
+        if (delay_mins - int_delay_mins) >= .5:
+            delay_mins = int_delay_mins + 1  # Handle rounding up
+        else:
+            delay_mins = int_delay_mins
+
+        close_time = start.shift(hours=+delay_hours, minutes=+delay_mins)
         return close_time.isoformat()
 
     for pair in close_table:
@@ -119,12 +140,16 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         i += 1
 
 
-    close_time = start.shift(hours=+close_delay)
+    delay_hours = int(close_delay)
+    delay_mins = (close_delay - delay_hours) * 60
+    int_delay_mins = int(delay_mins)
+
+    if (delay_mins - int_delay_mins) >= .5:
+        delay_mins = int_delay_mins + 1  # Handle rounding up
+    else:
+        delay_mins = int_delay_mins
+
+    close_time = start.shift(hours=+delay_hours, minutes=+delay_mins)
     return close_time.isoformat()
 
     #return arrow.now().isoformat()
-
-
-def test_acp():
-    assert open_time(100, 200, arrow.now().isoformat()) == arrow.now().shift(hours=+2, minutes=+56).isoformat()  # check control within boundries
-    assert close_time(100, 200, arrow.now().isoformat()) == arrow.now().shift(hours=+6, minutes=+40).isoformat()  # check control within boundries
