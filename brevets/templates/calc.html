@@ -135,7 +135,7 @@
       function(data) {
          var times = data.result;
          console.log("Got a response: " +  times);
-         console.log("Response.open = " + times.open);
+         console.log("Response.open = " + times.open); //Contains correct time, something goes wrong in the conversion to human readable below
          open_time_field.val( moment(times.open).format("ddd M/D H:mm"));
          close_time_field.val( moment(times.close).format("ddd M/D H:mm"));
        } // end of handler function
