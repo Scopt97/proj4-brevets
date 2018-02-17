@@ -59,8 +59,6 @@ def _calc_times():
     print("*********", request.args)
     app.logger.debug("km={}".format(km))
     app.logger.debug("request.args: {}".format(request.args))
-    # FIXME: These probably aren't the right open and close times
-    # and brevets may be longer than 200km
     start_iso = start_date + 'T' + start_time + ':00'
     print("***start_iso: ", start_iso)
     open_time = acp_times.open_time(km, brevet_dist, start_iso)
